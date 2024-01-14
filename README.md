@@ -1,4 +1,4 @@
-personal website and blog of nexxel. inspired by [zaduma](https://github.com/hasparus/zaduma).
+personal website and blog of matt creekmore. inspired by [zaduma](https://github.com/hasparus/zaduma).
 
 **tech stack**
 
