@@ -1,64 +1,73 @@
 ---
-import { getCollection } from "astro:content"
-import { sortPostsByDate } from "../lib/date"
-import Link from "../components/Link.vue"
-import Base from "../layouts/Base.astro"
-import Project from "../components/Project.astro"
-import PostRow from "../components/PostRow.astro"
-import { getProjects } from "../lib/projects"
+import { getCollection } from 'astro:content'
+import { sortPostsByDate } from '../lib/date'
+import Link from '../components/Link.vue'
+import Base from '../layouts/Base.astro'
+import Project from '../components/Project.astro'
+import PostRow from '../components/PostRow.astro'
+import { getProjects } from '../lib/projects'
 
 // const projects = await getProjects(6)
 const projects = await getProjects()
 const posts = sortPostsByDate(
-  await getCollection("blog", ({ data }) => data.isDraft !== true),
+  await getCollection('blog', ({ data }) => data.isDraft !== true)
 ).slice(0, 4)
 
-const title = "creekmore • home";
+const title = 'creekmore • home'
 ---
 
 <Base
   {title}
-  description="Personal website and blog of Matt Creekmore."
-  image="https://og.nxl.sh/home"
+  description='Personal website and blog of Matt Creekmore.'
+  image='https://og.nxl.sh/home'
 >
-  <h1 slot="header-content" class="text-neutral-500">
-    creekmore.io
-  </h1>
+  <h1 slot='header-content' class='text-neutral-500'>creekmore.io</h1>
 
-  <main class="prose">
+  <main class='prose'>
     <p>
-      <!-- <small class="text-neutral-500"
+      <small class='text-neutral-500'
         >IPA &nbsp; /ˈnɛks ɛl/ — no meaning, i made it up</small
       >
-      <br /> -->
-      Hi there, I'm <strong>Matt Creekmore</strong> aka <strong>creekmore.io</strong>. 
-      I'm a software engineer focused on building decentralized applications with distributed ledger technoligies such as Ethereum.     </p>
+      <br />
+      Hi there, I'm <strong>Matt Creekmore</strong> aka <strong
+        >creekmore.io</strong
+      >. I'm a software engineer focused on building distributed applications
+      with technologies such as Ethereum
+    </p>
+
+    <p>
+      I love improving my home lab, automating my life, and building with cool
+      technologies like
+      <strong>
+        <a href='https://flutter.dev/' target='_blank'>Flutter,</a>
+      </strong>
+      <strong>
+        <a href='https://go.dev/' target='_blank'>Golang,</a>
+      </strong>
+      and<strong>
+        <a href='https://soliditylang.org/' target='_blank'>Solidity</a>
+      </strong>
+    </p>
 
     <p>
       Currently you can find me at <strong>
-        <a
-          href="https://www.ubs.com/us/en.html"
-          target="_blank"
-        >
-			UBS
-        </a>
-      </strong> on their Virtual Assets team.
-
+        <a href='https://www.ubs.com/us/en.html' target='_blank'> UBS</a>
+      </strong> on their Digital Assets team
     </p>
 
-    <div class="mt-12"></div>
+    <div class='mt-12'></div>
     <h2>Projects</h2>
 
-    <div>under constructions</div>
-    <!-- <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-      {projects.map(project => <Project {project} />)}
-    </div> -->
+    <!-- <div>under constructions</div> -->
+    <div class='grid grid-cols-2 gap-4 md:grid-cols-3'>
+      {projects.map((project) => <Project {project} />)}
+    </div>
 
-    <div class="mt-12"></div>
+    <div class='mt-12'></div>
     <h2>Blog</h2>
     <div>under constructions</div>
 
-    <div class="flex flex-col gap-4">
+    <div class='flex flex-col gap-4'>
       <!-- {posts.map(post => <PostRow {post} />)}
 
       <span>

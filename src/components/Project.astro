@@ -1,18 +1,32 @@
 ---
-import type { Project } from "../lib/projects"
-import Link from "./Link.vue"
+import type { Project } from '../lib/projects'
+import Link from './Link.vue'
 
 type Props = {
   project: Project
 }
 
-const { project: { repo: name, description, link } } = Astro.props
+const {
+  project: { repoLink, name, description, link, linkText },
+} = Astro.props
 ---
 
-<div class="w-20.6666666666666666666666666666666666666666666666667ch flex flex-col">
-  <Link href={link}>
-    <span class="font-medium">{name}</span>
+<div
+  class='w-20.6666666666666666666666666666666666666666666666667ch flex flex-col'
+>
+  <Link href={repoLink}>
+    <span class='font-medium'>{name}</span>
   </Link>
 
-  <span class="pt-3">{description}</span>
+  <span class='pt-3'>{description}</span>
+
+  {
+    link ? (
+      <Link href={link}>
+        <span class='font-medium'>{linkText}</span>
+      </Link>
+    ) : (
+      <div />
+    )
+  }
 </div>
