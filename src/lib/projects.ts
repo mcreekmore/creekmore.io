@@ -39,7 +39,7 @@ export async function getProjects(): Promise<Project[]> {
       // link: 'https://v1.creekmore.io/#/moves',
       // linkText: 'See more',
       description: 'A flash-loan triangular arbitrage bot for Automated Market Makers like Uniswap and Pancakeswap.',
-      tech: ['Solidity', 'GoLang', 'Typescript']
+      tech: ['Solidity', 'GoLang', 'Typescript', 'Python']
     },
     {
       name: 'creekmore.io v1',
