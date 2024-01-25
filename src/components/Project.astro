@@ -7,7 +7,7 @@ type Props = {
 }
 
 const {
-  project: { repoLink, name, description, link, linkText },
+  project: { repoLink, name, description, link, linkText, tech },
 } = Astro.props
 ---
 
@@ -19,6 +19,8 @@ const {
   </Link>
 
   <span class='pt-3'>{description}</span>
+
+  <!-- {tech.map(item => <div class="pt-4">{item}</div>)} -->
 
   {
     link ? (

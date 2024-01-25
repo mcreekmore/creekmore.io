@@ -6,6 +6,7 @@ const projectSchema = z.object({
   linkText: z.string().optional(),
   description: z.string(),
   repoLink: z.string(),
+  tech: z.array(z.string())
 })
 
 export type Project = z.infer<typeof projectSchema>
@@ -29,7 +30,16 @@ export async function getProjects(): Promise<Project[]> {
       repoLink: 'https://github.com/mcreekmore/moves',
       link: 'https://v1.creekmore.io/#/moves',
       linkText: 'See more',
-      description: 'A cross-paltform Flutter app for local event tracking',
+      description: 'A cross-paltform Flutter app for local event tracking.',
+      tech: ['Flutter', 'Typescript', 'MongoDB'],
+    },
+    {
+      name: 'Arbiter',
+      repoLink: 'https://github.com/mcreekmore/arbiter',
+      // link: 'https://v1.creekmore.io/#/moves',
+      // linkText: 'See more',
+      description: 'A flash-loan triangular arbitrage bot for Automated Market Makers like Uniswap and Pancakeswap.',
+      tech: ['Solidity', 'GoLang', 'Typescript']
     },
     {
       name: 'creekmore.io v1',
@@ -37,13 +47,15 @@ export async function getProjects(): Promise<Project[]> {
       link: 'https://v1.creekmore.io/',
       linkText: 'Visit',
       description:
-        'Version 1 of my personal website. Built with the NEVM stack',
+        'Version 1 of my personal website. Built with the NEVM stack.',
+        tech: ['Node', 'Express', 'Vue', 'MongoDB']
     },
     {
       name: 'ammobroker',
       repoLink: 'https://github.com/mcreekmore/ammobroker',
       // link: "https://github.com/nexxeln/license-generator",
-      description: 'Fork of streetmerchant for finding ammo instead of gpus',
+      description: 'Fork of streetmerchant for finding ammo instead of gpus.',
+      tech: ['Typescript']
     },
     // {
     //   repo: "spotify-voice-control",
