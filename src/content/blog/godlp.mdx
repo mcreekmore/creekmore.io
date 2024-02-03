@@ -1,0 +1,58 @@
+---
+title: "godlp: A Beautiful GoLang CLI Experiment"
+description: "godlp journey"
+date: "February 3, 2024"
+---
+
+import Link from "../../components/Link.vue";
+import Code from "../../components/Code.vue";
+import { createHeading } from "../../components/Heading";
+
+export const components = {
+  a: Link,
+  code: Code,
+  h1: createHeading("h1"),
+  h2: createHeading("h2"),
+  h3: createHeading("h3"),
+};
+
+I've had a fascination with GoLang ever since I heard about it. Especially after 
+my first project using it, [triangular arbitrage bot](https://github.com/mcreekmore/arbiter), 
+I've been looking for an excuse to use it for something else.
+
+Something I find myself doing often on the comand line at home is using the amazing 
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) project to download music and vods from 
+YouTube and Soundcloud. yt-dlp is a flexible tool for downloading various content types 
+from the web. It's amazing.. Almost too amazing...
+
+The thing is, this project has so many flags and options that I get overwhelmed. After 
+I figured out what long command gets me my media exactly as I want, I saved it to a doc 
+and whenever I want to dl something else, I awkwardly copy it manually form the doc and 
+paste it into my terminal.
+
+Then I take my media file, say a song from soundcloud, and place it into a specific 
+folder structure for my Plex instance to pick up correctly in PlexAmp.
+
+> "Couldnt you just make a bash script?"
+
+Well yeah sure, but simplicity isn't the point right now! I want to build something cooler!
+
+## Cobra
+
+You've likely heard of [Cobra](https://cobra.dev/) as it is *the* Go CLI framework. For 
+most projects, cobra is an obvious choice. 
+
+I'll use the [cobra-cli](https://github.com/spf13/cobra-cli) to bootstrap the project with 
+[viper](https://github.com/spf13/viper) to manage configs later:
+
+```bash
+cobra-cli init --author "Matt Creekmore matt@creekmore.io" --viper
+```
+
+And we can get started by adding our first command:
+
+```bash
+cobra-cli add soundcloud
+```
+
+... to be continued
