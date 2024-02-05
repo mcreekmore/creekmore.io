@@ -1,7 +1,7 @@
 ---
-title: "godlp: A Beautiful GoLang CLI Experiment"
+title: "godlp: A GoLang CLI Experiment"
 description: "godlp journey"
-date: "February 3, 2024"
+date: "February 4, 2024"
 ---
 
 import Link from "../../components/Link.vue";
@@ -62,8 +62,8 @@ into the project so that users don't have to install them seperately as a prereq
 With Go 1.16, the native [embed](https://pkg.go.dev/embed@master) directive was added that looks perfect for 
 what we need.
 
-Let's create an *embed* package so that we can re-use our binary around our app. 
-We'll also need to include *ffmpeg* for any post-processing needs. Our module ends up looking like this:
+Let's create an `embed` package so that we can re-use our binary around our app. 
+We'll also need to include `ffmpeg` for any post-processing needs. Our module ends up looking like this:
 
 ```go
 package embed
@@ -124,8 +124,92 @@ func ExecuteYtDlp(args []string) {
 }
 ```
 
-Now we're free to import this anywhere around the project 
+Now we're free to import this anywhere around the project:
 
 ```go
 embed.ExecuteYtDlp(args)
 ```
+
+## Configuration
+
+When it comes time to reading configs like for where to download our music, 
+it couldn't get any easier.
+
+Viper makes it as simple as:
+
+```go
+musicDir := viper.GetString("music_directory")
+```
+
+By default reading a config file from `$HOME/.godlp.yaml`, and optionally can pass 
+one with `--config /path/to/config.yaml`
+
+## SoundCloud commands
+
+First up is the `soundcloud` command.
+
+This ended up being fairly simple. We pass our arguments along with the provided url 
+to our inbeded yt-dlp and tell it to download them to a `/temp` directory:
+
+```go
+tempDir := cwd + "/temp"
+
+scArgs := []string{
+	"-o", "%(title)s.%(ext)s",
+	"--embed-metadata",
+	"--embed-thumbnail",
+	"--metadata-from-title", "%(album)s",
+	"--paths", tempDir,
+	args[0], // Assuming soundcloudURL is the first argument
+}
+
+embed.ExecuteYtDlp(scArgs)
+```
+
+yt-dlp doesn't exactly have a real way to take the Album information and embed it 
+in the metadata. our `--metadata-from-title` flag copies the title into the albumn field. 
+Not exactly what we want, so I added an `--album` flag and a helper function to apply it 
+to the files with `ffmpeg`:
+
+```go
+albumName, _ := cmd.Flags().GetString("album")
+if albumName == "" {
+	fmt.Println("No album name provided. Grabbing Artist name instead.")
+	artistName, err := utils.ExtractArtistNameFromFile(tempDir)
+	if err != nil {
+		fmt.Printf("Error extracting artist name: %v\n", err)
+		return
+	}
+	albumName = artistName
+} else {
+	fmt.Println("Album flag provided. Writing with ffmpeg...")
+	utils.ChangeAlbumNameWithFFmpeg(tempDir, albumName)
+}
+```
+
+For Plex organization, the album name is used as the final save directory.
+
+Now that we have our completed files, its as simple as moving them to our 
+`music_directory` and clearing our `/temp` directory!
+
+## YouTube command
+
+Implementing a `youtube` command is even simpler. We only need a `video_directory` 
+in our config and a url we want to download.
+
+In our command, we'll pass the arguments as the equivalent of this command:
+
+```bash
+yt-dlp -o '%(title)s.%(ext)s' URL
+```
+
+This just removes the ID from the filename to make it cleaner. Then all we have to do 
+is move the file. Done!
+
+## Next steps
+
+For now, I'm storing the binary dependencies in the repo which I know is absolutely 
+**NOT** what you're supposed to do. So I'd like to create a proper
+
+I want to set up pipelines on the repo so that others who would like to use it 
+have a proper channel for changelogs and releases.
