@@ -1,0 +1,215 @@
+---
+title: "godlp: A GoLang CLI Experiment"
+description: "godlp journey"
+date: "February 4, 2024"
+---
+
+import Link from "../../components/Link.vue";
+import Code from "../../components/Code.vue";
+import { createHeading } from "../../components/Heading";
+
+export const components = {
+  a: Link,
+  code: Code,
+  h1: createHeading("h1"),
+  h2: createHeading("h2"),
+  h3: createHeading("h3"),
+};
+
+I've had a fascination with GoLang ever since I heard about it. Especially after 
+my first project using it, [triangular arbitrage bot](https://github.com/mcreekmore/arbiter), 
+I've been looking for an excuse to use it for something else.
+
+Something I find myself doing often on the comand line at home is using the amazing 
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) project to download music and vods from 
+YouTube and Soundcloud. yt-dlp is a flexible tool for downloading various content types 
+from the web. It's amazing.. Almost too amazing...
+
+The thing is, this project has so many flags and options that I get overwhelmed. After 
+I figured out what long command gets me my media exactly as I want, I saved it to a doc 
+and whenever I want to dl something else, I awkwardly copy it manually form the doc and 
+paste it into my terminal.
+
+Then I take my media file, say a song from soundcloud, and place it into a specific 
+folder structure for my Plex instance to pick up correctly in PlexAmp.
+
+> "Couldnt you just make a bash script?"
+
+Well yeah sure, but simplicity isn't the point right now! I want to build something cooler!
+
+## Cobra
+
+You've likely heard of [Cobra](https://cobra.dev/) as it is *the* Go CLI framework. For 
+most projects, cobra is an obvious choice. 
+
+I'll use the [cobra-cli](https://github.com/spf13/cobra-cli) to bootstrap the project with 
+[viper](https://github.com/spf13/viper) to manage configs later:
+
+```bash
+cobra-cli init --author "Matt Creekmore matt@creekmore.io" --viper
+```
+
+And we can get started by adding our first command:
+
+```bash
+cobra-cli add soundcloud
+```
+
+## Binary Dependency Management
+
+If this project is to provide people convenience, we're going to need a way to embed binaries 
+into the project so that users don't have to install them seperately as a prerequisite.
+With Go 1.16, the native [embed](https://pkg.go.dev/embed@master) directive was added that looks perfect for 
+what we need.
+
+Let's create an `embed` package so that we can re-use our binary around our app. 
+We'll also need to include `ffmpeg` for any post-processing needs. Our module ends up looking like this:
+
+```go
+package embed
+
+import (
+	_ "embed"
+	"fmt"
+	"os"
+	"os/exec"
+)
+
+//go:embed yt-dlp
+var ytDlpBinary []byte
+
+//go:embed ffmpeg
+var ffmpegBinary []byte
+
+// ExecuteYtDlp executes yt-dlp from the embedded binary
+func ExecuteYtDlp(args []string) {
+	// Create a temporary directory
+	tempDir, err := os.MkdirTemp("", "yt-dlp-embed")
+	if err != nil {
+		fmt.Printf("Error creating temporary directory: %v\n", err)
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Write embedded yt-dlp binary to a temporary file
+	ytDlpBinaryPath := tempDir + "/yt-dlp"
+	err = os.WriteFile(ytDlpBinaryPath, ytDlpBinary, 0755)
+	if err != nil {
+		fmt.Printf("Error writing yt-dlp binary to temporary location: %v\n", err)
+		return
+	}
+
+	// Write embedded ffmpeg binary to a temporary file
+	ffmpegBinaryPath := tempDir + "/ffmpeg"
+	err = os.WriteFile(ffmpegBinaryPath, ffmpegBinary, 0755)
+	if err != nil {
+		fmt.Printf("Error writing ffmpeg binary to temporary location: %v\n", err)
+		return
+	}
+
+	// Append ffmpeg path to args
+	args = append(args, "--ffmpeg-location", ffmpegBinaryPath)
+
+	// Execute yt-dlp from the temporary location
+	cmd := exec.Command(ytDlpBinaryPath, args...)
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		fmt.Println(string(output))
+		fmt.Printf("Error executing yt-dlp command: %v\n", err)
+		return
+	}
+
+	fmt.Println(string(output))
+}
+```
+
+Now we're free to import this anywhere around the project:
+
+```go
+embed.ExecuteYtDlp(args)
+```
+
+## Configuration
+
+When it comes time to reading configs like for where to download our music, 
+it couldn't get any easier.
+
+Viper makes it as simple as:
+
+```go
+musicDir := viper.GetString("music_directory")
+```
+
+By default reading a config file from `$HOME/.godlp.yaml`, and optionally can pass 
+one with `--config /path/to/config.yaml`
+
+## SoundCloud commands
+
+First up is the `soundcloud` command.
+
+This ended up being fairly simple. We pass our arguments along with the provided url 
+to our inbeded yt-dlp and tell it to download them to a `/temp` directory:
+
+```go
+tempDir := cwd + "/temp"
+
+scArgs := []string{
+	"-o", "%(title)s.%(ext)s",
+	"--embed-metadata",
+	"--embed-thumbnail",
+	"--metadata-from-title", "%(album)s",
+	"--paths", tempDir,
+	args[0], // Assuming soundcloudURL is the first argument
+}
+
+embed.ExecuteYtDlp(scArgs)
+```
+
+yt-dlp doesn't exactly have a real way to take the Album information and embed it 
+in the metadata. our `--metadata-from-title` flag copies the title into the albumn field. 
+Not exactly what we want, so I added an `--album` flag and a helper function to apply it 
+to the files with `ffmpeg`:
+
+```go
+albumName, _ := cmd.Flags().GetString("album")
+if albumName == "" {
+	fmt.Println("No album name provided. Grabbing Artist name instead.")
+	artistName, err := utils.ExtractArtistNameFromFile(tempDir)
+	if err != nil {
+		fmt.Printf("Error extracting artist name: %v\n", err)
+		return
+	}
+	albumName = artistName
+} else {
+	fmt.Println("Album flag provided. Writing with ffmpeg...")
+	utils.ChangeAlbumNameWithFFmpeg(tempDir, albumName)
+}
+```
+
+For Plex organization, the album name is used as the final save directory.
+
+Now that we have our completed files, its as simple as moving them to our 
+`music_directory` and clearing our `/temp` directory!
+
+## YouTube command
+
+Implementing a `youtube` command is even simpler. We only need a `video_directory` 
+in our config and a url we want to download.
+
+In our command, we'll pass the arguments as the equivalent of this command:
+
+```bash
+yt-dlp -o '%(title)s.%(ext)s' URL
+```
+
+This just removes the ID from the filename to make it cleaner. Then all we have to do 
+is move the file. Done!
+
+## Next steps
+
+For now, I'm storing the binary dependencies in the repo which I know is absolutely 
+**NOT** what you're supposed to do. So I'd like to create a proper
+
+I want to set up pipelines on the repo so that others who would like to use it 
+have a proper channel for changelogs and releases.

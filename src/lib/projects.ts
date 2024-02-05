@@ -6,7 +6,7 @@ const projectSchema = z.object({
   linkText: z.string().optional(),
   description: z.string(),
   repoLink: z.string(),
-  tech: z.array(z.string())
+  tech: z.array(z.string()),
 })
 
 export type Project = z.infer<typeof projectSchema>
@@ -26,6 +26,33 @@ export type Project = z.infer<typeof projectSchema>
 export async function getProjects(): Promise<Project[]> {
   return [
     {
+      name: 'godlp',
+      repoLink: 'https://github.com/mcreekmore/godlp',
+      link: 'https://creekmore.io/blog/godlp',
+      linkText: 'Read blog post',
+      description:
+        'A convenient wrapper for my common uses of yt-dlp written in Go.',
+      tech: ['GoLang'],
+    },
+    {
+      name: 'creekmore.io',
+      repoLink: 'https://github.com/mcreekmore/creekmore.io',
+      link: 'https://creekmore.io',
+      // linkText: 'See more',
+      description:
+        'Latest verison of my personal website and blog. Built with Astro.',
+      tech: ['GoLang'],
+    },
+    {
+      name: 'Arbiter',
+      repoLink: 'https://github.com/mcreekmore/arbiter',
+      // link: 'https://v1.creekmore.io/#/moves',
+      // linkText: 'See more',
+      description:
+        'A flash-loan triangular arbitrage bot for Automated Market Makers like Uniswap and Pancakeswap.',
+      tech: ['Solidity', 'GoLang', 'Typescript', 'Python'],
+    },
+    {
       name: 'Moves',
       repoLink: 'https://github.com/mcreekmore/moves',
       link: 'https://v1.creekmore.io/#/moves',
@@ -34,28 +61,20 @@ export async function getProjects(): Promise<Project[]> {
       tech: ['Flutter', 'Typescript', 'MongoDB'],
     },
     {
-      name: 'Arbiter',
-      repoLink: 'https://github.com/mcreekmore/arbiter',
-      // link: 'https://v1.creekmore.io/#/moves',
-      // linkText: 'See more',
-      description: 'A flash-loan triangular arbitrage bot for Automated Market Makers like Uniswap and Pancakeswap.',
-      tech: ['Solidity', 'GoLang', 'Typescript', 'Python']
-    },
-    {
       name: 'creekmore.io v1',
       repoLink: 'https://github.com/mcreekmore/app',
       link: 'https://v1.creekmore.io/',
       linkText: 'Visit',
       description:
         'Version 1 of my personal website. Built with the NEVM stack.',
-        tech: ['Node', 'Express', 'Vue', 'MongoDB']
+      tech: ['Node', 'Express', 'Vue', 'MongoDB'],
     },
     {
       name: 'ammobroker',
       repoLink: 'https://github.com/mcreekmore/ammobroker',
       // link: "https://github.com/nexxeln/license-generator",
       description: 'Fork of streetmerchant for finding ammo instead of gpus.',
-      tech: ['Typescript']
+      tech: ['Typescript'],
     },
     // {
     //   repo: "spotify-voice-control",
