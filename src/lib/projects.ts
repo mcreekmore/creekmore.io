@@ -26,12 +26,22 @@ export type Project = z.infer<typeof projectSchema>
 export async function getProjects(): Promise<Project[]> {
   return [
     {
-      name: 'Moves',
-      repoLink: 'https://github.com/mcreekmore/moves',
-      link: 'https://v1.creekmore.io/#/moves',
-      linkText: 'See more',
-      description: 'A cross-paltform Flutter app for local event tracking.',
-      tech: ['Flutter', 'Typescript', 'MongoDB'],
+      name: 'godlp',
+      repoLink: 'https://github.com/mcreekmore/godlp',
+      link: 'https://creekmore.io/blog/godlp',
+      linkText: 'Read blog post',
+      description:
+        'A convenient wrapper for my common uses of yt-dlp written in Go.',
+      tech: ['GoLang'],
+    },
+    {
+      name: 'creekmore.io',
+      repoLink: 'https://github.com/mcreekmore/creekmore.io',
+      link: 'https://creekmore.io',
+      // linkText: 'See more',
+      description:
+        'Latest verison of my personal website and blog. Built with Astro.',
+      tech: ['GoLang'],
     },
     {
       name: 'Arbiter',
@@ -41,6 +51,14 @@ export async function getProjects(): Promise<Project[]> {
       description:
         'A flash-loan triangular arbitrage bot for Automated Market Makers like Uniswap and Pancakeswap.',
       tech: ['Solidity', 'GoLang', 'Typescript', 'Python'],
+    },
+    {
+      name: 'Moves',
+      repoLink: 'https://github.com/mcreekmore/moves',
+      link: 'https://v1.creekmore.io/#/moves',
+      linkText: 'See more',
+      description: 'A cross-paltform Flutter app for local event tracking.',
+      tech: ['Flutter', 'Typescript', 'MongoDB'],
     },
     {
       name: 'creekmore.io v1',
