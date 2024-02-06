@@ -206,10 +206,157 @@ yt-dlp -o '%(title)s.%(ext)s' URL
 This just removes the ID from the filename to make it cleaner. Then all we have to do 
 is move the file. Done!
 
-## Next steps
+## Builds and Releases
 
-For now, I'm storing the binary dependencies in the repo which I know is absolutely 
-**NOT** what you're supposed to do. So I'd like to create a proper
+I have many more features planned but at the very least, I need to be able to build and distribute my app. Thankfully [goreleaser](https://goreleaser.com/) exists and does everything I'm looking for. 
 
-I want to set up pipelines on the repo so that others who would like to use it 
-have a proper channel for changelogs and releases.
+We can define a `.goreleaser.yaml` and tell it what platforms we'd like to target:
+
+```yaml
+builds:
+  - binary: godlp
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -mod=vendor
+
+release:
+  prerelease: auto
+
+universal_binaries:
+  - replace: true
+
+checksum:
+  name_template: 'checksums.txt'
+```
+
+For now, we're just targeting mac and linux. The `-mod=vendor` flag allows us to keep a copy of all of our depencenies in our repo just in case any of them become unavailable in the future.
+
+We'll use GitHub Actions to actually run our builds. That can be done by defining a `.github/workflows/release.yaml`. Goreleaser comes with many good defaults, so we only need to specify the following:
+
+```yaml
+name: goreleaser
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: stable
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: ${{env.GITHUB_REF_NAME}}
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISHER_TOKEN}}
+```
+
+And thats it! Whenever we push to `master` with a tag, it will trigger our build pipeline.
+
+Well... not quite yet. There's something we've got to address.
+
+## Conditional Compilation
+
+If we were to run our builds in this current state, we'd only have one platform that actually works. This is because we don't just have our go code to worry about platform-specific builds. We've also got binaries we're dependent on.
+
+We're going to need `darwin` and `linux` versions of both `yt-dlp` and `ffmpeg` binaries. Windows will come soon.
+
+We can use the go file suffixes to make multiple versions of our `godlp/embed` package and go will use the `GOOS` env variable to determine which file to use. Our embed directory will then look like this:
+
+```bash 
+.
+├── embed_darwin.go
+├── embed_linux.go
+├── ffmpeg_darwin
+├── ffmpeg_linux
+├── yt-dlp_darwin
+└── yt-dlp_linux
+```
+
+Now one of our embed files looks like this :
+
+```go
+package embed
+
+import (
+	_ "embed"
+)
+
+//go:embed yt-dlp_darwin
+var YtDlpBinary []byte
+
+//go:embed ffmpeg_darwin
+var FfmpegBinary []byte
+```
+
+I then moved the Execute functions into the utils package since they make more sense there.
+
+And now we're finally done! Platform-specific builds are that simple.
+
+Now one last thing to really make this project seem legit:
+
+## Configure a brew tap
+
+To add this package to the `homebrew` package manager, lets set up a `tap` (or repo) for brew to know how to access my builds:
+
+```bash
+brew tap-new mcreekmore/homebrew-mcreekmore
+```
+
+Then, I just set up that same repo on github and add it as my remote origin and add the following to our `.goreleaser.yaml`:
+
+```yaml
+brews:
+  - name: godlp
+    folder: Formula
+    homepage: https://github.com/mcreekmore/godlp
+    description: 'Convenient wrapper for yt-dlp'
+    repository:
+      owner: mcreekmore
+      name: homebrew-mcreekmore
+    commit_author:
+      name: mcreekmore
+      email: matthewacreekmore@gmail.com
+```
+
+Now I can push a tag to my the repo and it will build:
+
+```bash
+git tag -a v0.1.0 -m "First build"
+git push origin v0.1.0
+```
+
+Finally, I can simply add the tap I created and download my package!
+
+```bash
+brew tap mcreekmore/mcreekmore
+brew install godlp
+```
+
+## Demo
+
+![demo of godlp in the terminal](/images/godlp/demo.gif)
+
+[Check it out for yourself](https://github.com/mcreekmore/godlp)
