@@ -76,20 +76,5 @@ export async function getProjects(): Promise<Project[]> {
       description: 'Fork of streetmerchant for finding ammo instead of gpus.',
       tech: ['Typescript'],
     },
-    // {
-    //   repo: "spotify-voice-control",
-    //   link: "https://github.com/nexxeln/spotify-voice-control",
-    //   description: "Voice control for Spotify through the terminal",
-    // },
-    // {
-    //   repo: "hackernews",
-    //   link: "https://github.com/nexxeln/hackernews",
-    //   description: "Hacker News clone made with SolidStart and tRPC",
-    // },
-    // {
-    //   repo: "dots",
-    //   link: "https://github.com/nexxeln/dots",
-    //   description: "My dotfiles for MacOS",
-    // },
   ]
 }
