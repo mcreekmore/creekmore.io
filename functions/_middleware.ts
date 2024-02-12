@@ -8,5 +8,5 @@ export const onRequestOptions: PagesFunction = async () => {
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Max-Age': '86400',
     },
-  });
-};
+  })
+}

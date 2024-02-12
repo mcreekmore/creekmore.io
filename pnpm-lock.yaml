@@ -49,6 +49,9 @@ devDependencies:
   '@antfu/eslint-config':
     specifier: 2.3.4
     version: 2.3.4(eslint@8.56.0)(typescript@5.3.3)
+  '@cloudflare/workers-types':
+    specifier: ^4.20240208.0
+    version: 4.20240208.0
   '@iconify-json/mdi':
     specifier: ^1.1.59
     version: 1.1.64
@@ -82,6 +85,9 @@ devDependencies:
   eslint-plugin-jsx-a11y:
     specifier: ^6.8.0
     version: 6.8.0(eslint@8.56.0)
+  typescript:
+    specifier: ^5.3.3
+    version: 5.3.3
   unocss:
     specifier: ^0.58.0
     version: 0.58.3(postcss@8.4.33)(vite@5.0.12)
@@ -635,6 +641,10 @@ packages:
       '@babel/helper-string-parser': 7.23.4
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
+
+  /@cloudflare/workers-types@4.20240208.0:
+    resolution: {integrity: sha512-MVGTTjZpJu4kJONvai5SdJzWIhOJbuweVZ3goI7FNyG+JdoQH41OoB+nMhLsX626vPLZVWGPIWsiSo/WZHzgQw==}
+    dev: true
 
   /@es-joy/jsdoccomment@0.41.0:
     resolution: {integrity: sha512-aKUhyn1QI5Ksbqcr3fFJj16p99QdjUxXAEuFst1Z47DRyoiMwivIH9MV/ARcJOCXVjPfjITciej8ZD2O/6qUmw==}
