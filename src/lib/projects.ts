@@ -26,9 +26,18 @@ export type Project = z.infer<typeof projectSchema>
 export async function getProjects(): Promise<Project[]> {
   return [
     {
+      name: 'Terraform for Unraid',
+      repoLink: 'https://github.com/mcreekmore/unraid-terraform',
+      link: '/blog/unraid-terraform',
+      linkText: 'Read blog post',
+      description:
+        'Deploy Unraid VMs with Terraform and OpenTofu',
+      tech: ['Terraform', 'OpenTofu'],
+    },
+    {
       name: 'godlp',
       repoLink: 'https://github.com/mcreekmore/godlp',
-      link: 'https://creekmore.io/blog/godlp',
+      link: '/blog/godlp',
       linkText: 'Read blog post',
       description:
         'A convenient wrapper for my common uses of yt-dlp written in Go.',
