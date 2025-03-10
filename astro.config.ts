@@ -7,12 +7,16 @@ import sitemap from "@astrojs/sitemap";
 import unocss from "unocss/astro";
 // @ts-ignore
 import vesper from "./src/lib/vesper.json";
+import expressiveCode from 'astro-expressive-code';
 
 export default defineConfig({
   site: "https://creekmore.io",
   // adapter: vercel(),
   // output: "hybrid",
   integrations: [
+    expressiveCode({
+      themes: ["catppuccin-mocha"]
+    }),
     mdx(),
     sitemap(),
     solidJs(),

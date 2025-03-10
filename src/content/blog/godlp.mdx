@@ -65,7 +65,7 @@ what we need.
 Let's create an `embed` package so that we can re-use our binary around our app. 
 We'll also need to include `ffmpeg` for any post-processing needs. Our module ends up looking like this:
 
-```go
+```go frame="code" title="utils.go"
 package embed
 
 import (
@@ -151,7 +151,7 @@ First up is the `soundcloud` command.
 This ended up being fairly simple. We pass our arguments along with the provided url 
 to our inbeded yt-dlp and tell it to download them to a `/temp` directory:
 
-```go
+```go frame="code"
 tempDir := cwd + "/temp"
 
 scArgs := []string{
@@ -171,7 +171,7 @@ in the metadata. our `--metadata-from-title` flag copies the title into the albu
 Not exactly what we want, so I added an `--album` flag and a helper function to apply it 
 to the files with `ffmpeg`:
 
-```go
+```go frame="code"
 albumName, _ := cmd.Flags().GetString("album")
 if albumName == "" {
 	fmt.Println("No album name provided. Grabbing Artist name instead.")
@@ -212,7 +212,7 @@ I have many more features planned but at the very least, I need to be able to bu
 
 We can define a `.goreleaser.yaml` and tell it what platforms we'd like to target:
 
-```yaml
+```yaml frame="code" title=".goreleaser.yaml"
 builds:
   - binary: godlp
     goos:
@@ -240,7 +240,7 @@ For now, we're just targeting mac and linux. The `-mod=vendor` flag allows us to
 
 We'll use GitHub Actions to actually run our builds. That can be done by defining a `.github/workflows/release.yaml`. Goreleaser comes with many good defaults, so we only need to specify the following:
 
-```yaml
+```yaml frame="code" title="release.yaml"
 name: goreleaser
 
 on:
@@ -327,7 +327,7 @@ brew tap-new mcreekmore/homebrew-mcreekmore
 
 Then, I just set up that same repo on github and add it as my remote origin and add the following to our `.goreleaser.yaml`:
 
-```yaml
+```yaml frame="code" title=".goreleaser.yaml"
 brews:
   - name: godlp
     folder: Formula
