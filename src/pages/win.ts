@@ -9,6 +9,7 @@ export const GET: APIRoute = async () => {
   return new Response(script, {
     headers: {
       'Content-Type': 'text/plain',
+      'Content-Disposition': 'inline',
       'Cache-Control': 'no-cache',
     },
   });
