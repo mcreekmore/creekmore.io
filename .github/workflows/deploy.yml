@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Deploy
 on:
   schedule:
     - cron: '0 0 * * *'  # Daily at midnight UTC
@@ -6,6 +6,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+  repository_dispatch:   
+    types: [trigger_build]  
 
 permissions:
   contents: read
