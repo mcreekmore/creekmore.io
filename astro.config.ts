@@ -10,9 +10,8 @@ import vesper from "./src/lib/vesper.json";
 import expressiveCode from 'astro-expressive-code';
 
 export default defineConfig({
-  // site: "https://creekmore.io",
-  site: 'https://mcreekmore.github.io',
-  base: '/creekmore.io/', 
+  site: 'https://creekmore.io',
+  // base: '/creekmore.io/', 
   // adapter: vercel(),
   // output: "hybrid",
   integrations: [
