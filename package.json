@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "2.3.4",
+    "@catppuccin/tailwindcss": "^0.1.6",
     "@cloudflare/workers-types": "^4.20240208.0",
     "@iconify-json/mdi": "^1.1.59",
     "@iconify-json/radix-icons": "^1.1.13",

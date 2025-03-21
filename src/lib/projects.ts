@@ -46,7 +46,7 @@ export async function getProjects(): Promise<Project[]> {
     {
       name: 'creekmore.io',
       repoLink: 'https://github.com/mcreekmore/creekmore.io',
-      link: 'https://creekmore.io',
+      // link: 'https://creekmore.io',
       // linkText: 'See more',
       description:
         'Latest verison of my personal website and blog. Built with Astro.',
@@ -65,7 +65,7 @@ export async function getProjects(): Promise<Project[]> {
       name: 'Moves',
       repoLink: 'https://github.com/mcreekmore/moves',
       link: 'https://v1.creekmore.io/#/moves',
-      linkText: 'See more',
+      linkText: 'View project page',
       description: 'A cross-paltform Flutter app for local event tracking.',
       tech: ['Flutter', 'Typescript', 'MongoDB'],
     },
@@ -73,7 +73,7 @@ export async function getProjects(): Promise<Project[]> {
       name: 'creekmore.io v1',
       repoLink: 'https://github.com/mcreekmore/app',
       link: 'https://v1.creekmore.io/',
-      linkText: 'Visit',
+      linkText: 'Visit the original',
       description:
         'Version 1 of my personal website. Built with the NEVM stack.',
       tech: ['Node', 'Express', 'Vue', 'MongoDB'],
